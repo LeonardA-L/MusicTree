@@ -26,7 +26,7 @@ def callSound(args):
 
 arduinoValue = input("entrez votre entier\n")
 
-while (arduinoValue != 66665):
+while (arduinoValue != 666):
     fillTable(arduinoValue)
     callSound(sensorValues)
     arduinoValue = input()

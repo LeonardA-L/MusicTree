@@ -7,6 +7,10 @@ __email__ = "emilien.bai@insa-lyon.fr"
 import pygame
 import pygame.mixer
 from os import chdir
+import thread
+
+def playSound(toPlay):
+    toPlay.play()
 
 
 class SoundBox :
@@ -37,17 +41,17 @@ class SoundBox :
             #print ("salut", i, args[i])
             if args[i]==1 :
                 if i == 0 :
-                    self.sound0.play()
+                    thread.start_new_thread(playSound, (self.sound0,))
                 elif i == 1 :
-                    self.sound1.play()
+                    thread.start_new_thread(playSound, (self.sound1,))
                 elif i == 2 :
-                    self.sound2.play()
+                    thread.start_new_thread(playSound, (self.sound2,))
                 elif i== 3 :
-                    self.sound3.play()
+                    thread.start_new_thread(playSound, (self.sound3,))
                 elif i == 4 :
-                    self.sound4.play()
+                    thread.start_new_thread(playSound, (self.sound4,))
                 elif i == 5 :
-                    self.sound5.play()
+                    thread.start_new_thread(playSound, (self.sound5,))
 
 
 
