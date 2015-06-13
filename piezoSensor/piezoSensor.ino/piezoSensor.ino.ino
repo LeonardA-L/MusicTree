@@ -3,7 +3,10 @@
 #define noiseDiffBarrier 100
 #define loopDelay 10
 #define commandSize 4
-#define debug false
+#define debug true
+
+#define calibrationCommand "cal"
+#define pingCommand "ping"
 
 int sensorValue = 0;
 byte Pins[] = {A0,A1};
@@ -41,12 +44,38 @@ void listenSerial(){
 }
 
 void printBackCommand(){
+  Serial.println("Printing command back :");
   for(int i=0;i<commandSize;++i){
     if(commands[i] != ""){
       Serial.println(commands[i]);
-      commands[i] = "";
     }
   } 
+}
+
+void resetCommands(){
+  for(int i=0;i<commandSize;++i){
+    if(commands[i] != ""){
+      commands[i] = "";
+    }
+  }
+}
+
+// Commands
+void ping(){
+    Serial.println("pong");
+}
+
+void calibrateOne(int idx){
+  String s = "Calibrating ";
+  s.concat(idx);
+  Serial.println(s);
+}
+
+void calibrateAll(){
+  Serial.println("//------ Calibrate all -----");
+  for(int i=0;i<nSensors;++i){
+    calibrateOne(i);
+  }
 }
 
 void loop() {
@@ -61,6 +90,24 @@ void loop() {
     if(debug){
       printBackCommand();
     }
+    
+    // Ping
+    if(commands[0] == pingCommand){
+     ping(); 
+    }
+    // Calibration
+    else if(commands[0] == calibrationCommand){
+     // Calibrating only one sensor, by id
+     if(commands[1] != "" && commands[1].toInt() < nSensors){
+      calibrateOne(commands[1].toInt());
+     }
+     // Or launching general calibration
+    else{
+     calibrateAll();
+    } 
+    }
+    
+    resetCommands();
   }
   
   // Check sensors
