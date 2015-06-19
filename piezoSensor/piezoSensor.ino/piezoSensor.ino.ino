@@ -4,13 +4,17 @@
 #define loopDelay 10
 #define commandSize 4
 #define debug true
+#define calibrationTime  5000
 
 #define calibrationCommand "cal"
 #define pingCommand "ping"
 
+
 int sensorValue = 0;
 byte Pins[] = {A0,A1};
 int values[nSensors]={0};
+int maxNoise[nSensors]={0};
+boolean playing[nSensors]={false};
 String input="";
 String commands[commandSize];
 int c;
@@ -69,6 +73,20 @@ void calibrateOne(int idx){
   String s = "Calibrating ";
   s.concat(idx);
   Serial.println(s);
+  int i=0;
+  int smax=0;
+  for(;i<calibrationTime;i++){
+    int newValue = analogRead(Pins[i]);
+    if(newValue > smax){
+     smax = newValue; 
+    }
+    delay(1);
+  }
+  s="End of calibration, max :";
+  s.concat(smax);
+  maxNoise[i] = smax;
+  Serial.println(s);
+  
 }
 
 void calibrateAll(){
