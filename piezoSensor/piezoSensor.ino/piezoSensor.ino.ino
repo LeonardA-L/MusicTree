@@ -76,7 +76,7 @@ void calibrateOne(int idx){
   int i=0;
   int smax=0;
   for(;i<calibrationTime;i++){
-    int newValue = analogRead(Pins[i]);
+    int newValue = analogRead(Pins[idx]);
     if(newValue > smax){
      smax = newValue; 
     }
