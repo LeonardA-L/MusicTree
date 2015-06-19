@@ -144,8 +144,13 @@ void loop() {
       sensorValue = newValue;
       
       // Check for threshold
-      if(diff > noiseDiffBarrier){
+      if(diff > noiseDiffBarrier && !playing[x]){
         signal += 1 << x;
+        playing[x] = true;
+      }
+      
+      if(diff<noiseDiffBarrier && playing[x]){
+        playing[x] = false;
       }
     }
     
