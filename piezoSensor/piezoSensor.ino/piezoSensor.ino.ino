@@ -5,6 +5,7 @@
 #define commandSize 4
 #define debug true
 #define calibrationTime  5000
+#define sensorMax 1023
 
 #define calibrationCommand "cal"
 #define pingCommand "ping"
@@ -127,31 +128,32 @@ void loop() {
     
     resetCommands();
   }
-  
-  // Check sensors
-  // -------------
-  int signal=0;
-  for (int x = 0; x < nSensors; ++x){  // For each sensor
-    // Read new value
-    int newValue = analogRead(Pins[x]);
-    
-    int diff = abs(sensorValue - newValue);
-    
-    // test cheat
-    //diff = 200;
-    
-    sensorValue = newValue;
-    
-    // Check for threshold
-    if(diff > noiseDiffBarrier){
-      signal += 1 << x;
+  else{
+    // Check sensors
+    // -------------
+    int signal=0;
+    for (int x = 0; x < nSensors; ++x){  // For each sensor
+      // Read new value
+      int newValue = ((analogRead(Pins[x])) - maxNoise[x]) * sensorMax / (sensorMax - maxNoise[x]);
+      
+      int diff = abs(sensorValue - newValue);
+      
+      // test cheat
+      //diff = 200;
+      
+      sensorValue = newValue;
+      
+      // Check for threshold
+      if(diff > noiseDiffBarrier){
+        signal += 1 << x;
+      }
     }
+    
+    if(signal > 0){
+      Serial.println(signal);
+    }
+    // -------------
   }
-  
-  if(signal > 0){
-    Serial.println(signal);
-  }
-  // -------------
   
   delay(loopDelay);        // delay in between reads for stability
 }
