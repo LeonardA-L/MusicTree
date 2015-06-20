@@ -18,9 +18,8 @@ a = TSB.SoundBox()
 #Functions
 def fillTable(int_value):
     for i in range(0, sensorNumber):
-        temp = int_value >> i
-        temp = temp & 0b1
-        sensorValues[i] = int(temp)
+        int_value = int_value >> 1
+        sensorValues[i] = int(int_value & 0b1)
 
 
 def callSound(args):
@@ -32,7 +31,8 @@ while True:
         arduinoValue = int (s.readline())
         break
     except ValueError:
-        print "Oops!  That was no valid number.  Try again..."
+        pass
+        #print "Oops!  That was no valid number.  Try again..."
 
 while (arduinoValue != 666):
     #print (datetime.datetime.now());
