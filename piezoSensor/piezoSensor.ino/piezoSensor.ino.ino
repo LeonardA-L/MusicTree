@@ -1,9 +1,9 @@
 // Constants
-#define nSensors 2
+#define nSensors 6
 #define loopDelay 1
 #define commandSize 4
 #define debug true
-#define calibrationTime  1500
+#define calibrationTime  2500
 #define sensorMax 1023
 
 #define calibrationCommand "cal"
