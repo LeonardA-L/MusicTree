@@ -1,5 +1,5 @@
 // Constants
-#define nSensors 1
+#define nSensors 2
 #define loopDelay 1
 #define commandSize 4
 #define debug true
@@ -14,7 +14,7 @@
 int noiseBarrier = 600;
 int timeThreshold = 250;
 //int sensorValue = 0;
-byte Pins[] = {A0,A1};
+byte Pins[] = {A0,A1,A2,A3,A4,A5};
 int values[nSensors]={0};
 int maxNoise[nSensors]={0};
 int playing[nSensors]={false};
@@ -136,14 +136,14 @@ void loop() {
     }
     // Calibration
     else if(commands[0] == calibrationCommand){
-     // Calibrating only one sensor, by id
-     if(commands[1] != "" && commands[1].toInt() < nSensors){
-      calibrateOne(commands[1].toInt());
-     }
-     // Or launching general calibration
-    else{
-     calibrateAll();
-    } 
+       // Calibrating only one sensor, by id
+      if(commands[1] != "" && commands[1].toInt() < nSensors){
+        calibrateOne(commands[1].toInt());
+      }
+      // Or launching general calibration
+      else{
+        calibrateAll();
+      } 
     }
     
     resetCommands();
@@ -153,32 +153,16 @@ void loop() {
     // -------------
     int signal=0;
     for (int x = 0; x < nSensors; ++x){  // For each sensor
-      // Read new value
+      // Read new value (center and normalize)
       int newValue = abs(max(((analogRead(Pins[x])) - maxNoise[x]),0) * ((double)sensorMax) / ((double)(sensorMax - maxNoise[x])));
       //newValue = (analogRead(Pins[x]));
-      //int diff = abs(sensorValue - newValue);
       
-      // test cheat+6
-      //diff = 200;
-      
-      //sensorValue = newValue;
-      //Serial.println(newValue);
       // Check for threshold
-      //if(diff > noiseBarrier && !playing[x]){
         int timeDiff = millis() - playing[x];
       if(newValue > noiseBarrier && timeDiff > timeThreshold){
-        signal += 1 << x;
+        signal += (1 << x);
         playing[x] = millis();
-        //Serial.println(newValue);
-        //Serial.println(timeDiff);
       }
-      /*
-      //if(diff<noiseDiffBarrier && playing[x]){
-      if(newValue<noiseBarrier && playing[x]){
-        playing[x] = false;
-        Serial.println(millis());
-      }
-      */
     }
     
     if(signal > 0){
