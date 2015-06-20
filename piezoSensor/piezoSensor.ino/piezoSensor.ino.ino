@@ -1,17 +1,17 @@
 // Constants
-#define nSensors 2
+#define nSensors 1
 #define noiseDiffBarrier 100
-#define loopDelay 10
+#define loopDelay 1
 #define commandSize 4
 #define debug true
-#define calibrationTime  5000
+#define calibrationTime  1500
 #define sensorMax 1023
 
 #define calibrationCommand "cal"
 #define pingCommand "ping"
 
 
-int sensorValue = 0;
+//int sensorValue = 0;
 byte Pins[] = {A0,A1};
 int values[nSensors]={0};
 int maxNoise[nSensors]={0};
@@ -134,22 +134,25 @@ void loop() {
     int signal=0;
     for (int x = 0; x < nSensors; ++x){  // For each sensor
       // Read new value
-      int newValue = ((analogRead(Pins[x])) - maxNoise[x]) * sensorMax / (sensorMax - maxNoise[x]);
-      
-      int diff = abs(sensorValue - newValue);
+      int newValue = abs(((analogRead(Pins[x])) - maxNoise[x]) * ((double)sensorMax) / ((double)(sensorMax - maxNoise[x])));
+      //newValue = (analogRead(Pins[x]));
+      //int diff = abs(sensorValue - newValue);
       
       // test cheat
       //diff = 200;
       
-      sensorValue = newValue;
-      
+      //sensorValue = newValue;
+      //Serial.println(newValue);
       // Check for threshold
-      if(diff > noiseDiffBarrier && !playing[x]){
+      //if(diff > noiseDiffBarrier && !playing[x]){
+      if(newValue > noiseDiffBarrier && !playing[x]){
         signal += 1 << x;
         playing[x] = true;
+        Serial.println(newValue);
       }
       
-      if(diff<noiseDiffBarrier && playing[x]){
+      //if(diff<noiseDiffBarrier && playing[x]){
+      if(newValue<noiseDiffBarrier && playing[x]){
         playing[x] = false;
       }
     }
@@ -157,6 +160,7 @@ void loop() {
     if(signal > 0){
       Serial.println(signal);
     }
+    
     // -------------
   }
   
