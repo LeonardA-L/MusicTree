@@ -18,8 +18,9 @@ a = TSB.SoundBox()
 #Functions
 def fillTable(int_value):
     for i in range(0, sensorNumber):
-        int_value = int_value >> 1
-        sensorValues[i] = int(int_value & 0b1)
+        temp = int_value >> i
+        temp = temp & 0b1
+        sensorValues[i] = int(temp)
 
 
 def callSound(args):
