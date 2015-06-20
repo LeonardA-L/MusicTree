@@ -1,6 +1,5 @@
 // Constants
 #define nSensors 1
-#define noiseDiffBarrier 100
 #define loopDelay 1
 #define commandSize 4
 #define debug true
@@ -9,8 +8,9 @@
 
 #define calibrationCommand "cal"
 #define pingCommand "ping"
+#define thresholdCommand "thr"
 
-
+int noiseBarrier = 100;
 //int sensorValue = 0;
 byte Pins[] = {A0,A1};
 int values[nSensors]={0};
@@ -70,6 +70,11 @@ void ping(){
     Serial.println("pong");
 }
 
+void setNoiseBarrier(int nv){
+    noiseBarrier = nv;
+    Serial.println("done");
+}
+
 void calibrateOne(int idx){
   String s = "Calibrating ";
   s.concat(idx);
@@ -114,6 +119,10 @@ void loop() {
     if(commands[0] == pingCommand){
      ping(); 
     }
+    //noise threshold
+    else if(commands[0] == thresholdCommand){
+      setNoiseBarrier(commands[1].toInt());
+    }
     // Calibration
     else if(commands[0] == calibrationCommand){
      // Calibrating only one sensor, by id
@@ -134,7 +143,7 @@ void loop() {
     int signal=0;
     for (int x = 0; x < nSensors; ++x){  // For each sensor
       // Read new value
-      int newValue = abs(((analogRead(Pins[x])) - maxNoise[x]) * ((double)sensorMax) / ((double)(sensorMax - maxNoise[x])));
+      int newValue = abs(max(((analogRead(Pins[x])) - maxNoise[x]),0) * ((double)sensorMax) / ((double)(sensorMax - maxNoise[x])));
       //newValue = (analogRead(Pins[x]));
       //int diff = abs(sensorValue - newValue);
       
@@ -144,15 +153,15 @@ void loop() {
       //sensorValue = newValue;
       //Serial.println(newValue);
       // Check for threshold
-      //if(diff > noiseDiffBarrier && !playing[x]){
-      if(newValue > noiseDiffBarrier && !playing[x]){
+      //if(diff > noiseBarrier && !playing[x]){
+      if(newValue > noiseBarrier && !playing[x]){
         signal += 1 << x;
         playing[x] = true;
         Serial.println(newValue);
       }
       
       //if(diff<noiseDiffBarrier && playing[x]){
-      if(newValue<noiseDiffBarrier && playing[x]){
+      if(newValue<noiseBarrier && playing[x]){
         playing[x] = false;
       }
     }
