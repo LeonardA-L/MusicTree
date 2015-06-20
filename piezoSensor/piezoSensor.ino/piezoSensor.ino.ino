@@ -182,7 +182,10 @@ void loop() {
     }
     
     if(signal > 0){
-      Serial.println(signal);
+      String s = "";
+      s.concat(signal);
+      s.concat("\n");
+      Serial.print(s);
     }
     // -------------
   }
