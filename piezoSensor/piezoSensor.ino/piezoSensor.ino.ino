@@ -8,21 +8,23 @@
 
 #define calibrationCommand "cal"
 #define pingCommand "ping"
-#define thresholdCommand "thr"
+#define noiseThresholdCommand "nthr"
+#define timeThresholdCommand "tthr"
 
-int noiseBarrier = 100;
+int noiseBarrier = 600;
+int timeThreshold = 250;
 //int sensorValue = 0;
 byte Pins[] = {A0,A1};
 int values[nSensors]={0};
 int maxNoise[nSensors]={0};
-boolean playing[nSensors]={false};
+int playing[nSensors]={false};
 String input="";
 String commands[commandSize];
 int c;
 boolean commandComplete = false;
 
 void setup() {
-  Serial.begin(9600);  // Such serial, many wow
+  Serial.begin(115200);  // Such serial, many wow
   input.reserve(200);
   input="";
   c=0;
@@ -75,6 +77,11 @@ void setNoiseBarrier(int nv){
     Serial.println("done");
 }
 
+void setTimeBarrier(int nv){
+    timeThreshold = nv;
+    Serial.println("done");
+}
+
 void calibrateOne(int idx){
   String s = "Calibrating ";
   s.concat(idx);
@@ -120,8 +127,12 @@ void loop() {
      ping(); 
     }
     //noise threshold
-    else if(commands[0] == thresholdCommand){
+    else if(commands[0] == noiseThresholdCommand){
       setNoiseBarrier(commands[1].toInt());
+    }
+    // time cooldown
+    else if(commands[0] == timeThresholdCommand){
+      setTimeBarrier(commands[1].toInt());
     }
     // Calibration
     else if(commands[0] == calibrationCommand){
@@ -147,29 +158,32 @@ void loop() {
       //newValue = (analogRead(Pins[x]));
       //int diff = abs(sensorValue - newValue);
       
-      // test cheat
+      // test cheat+6
       //diff = 200;
       
       //sensorValue = newValue;
       //Serial.println(newValue);
       // Check for threshold
       //if(diff > noiseBarrier && !playing[x]){
-      if(newValue > noiseBarrier && !playing[x]){
+        int timeDiff = millis() - playing[x];
+      if(newValue > noiseBarrier && timeDiff > timeThreshold){
         signal += 1 << x;
-        playing[x] = true;
-        Serial.println(newValue);
+        playing[x] = millis();
+        //Serial.println(newValue);
+        //Serial.println(timeDiff);
       }
-      
+      /*
       //if(diff<noiseDiffBarrier && playing[x]){
       if(newValue<noiseBarrier && playing[x]){
         playing[x] = false;
+        Serial.println(millis());
       }
+      */
     }
     
     if(signal > 0){
       Serial.println(signal);
     }
-    
     // -------------
   }
   
