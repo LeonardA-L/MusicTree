@@ -8,6 +8,9 @@ import pygame
 import pygame.mixer
 from os import chdir
 import thread
+import gc
+
+gc.disable()
 
 def playSound(toPlay):
     toPlay.play()
@@ -17,22 +20,22 @@ class SoundBox :
     def __init__ (self) :
         pygame.init()
         chdir("../Sons/")
-        self.soundname0 = "zero.wav"
+        self.soundname0 = "clap.wav"
         self.sound0 = pygame.mixer.Sound(self.soundname0)
 
-        self.soundname1 = "un.wav"
+        self.soundname1 = "hithat.wav"
         self.sound1 = pygame.mixer.Sound(self.soundname1)
 
-        self.soundname2 = "deux.wav"
+        self.soundname2 = "kick.wav"
         self.sound2 = pygame.mixer.Sound(self.soundname2)
 
-        self.soundname3 = "trois.wav"
+        self.soundname3 = "midTom.wav"
         self.sound3 = pygame.mixer.Sound(self.soundname3)
 
-        self.soundname4 = "quatre.wav"
+        self.soundname4 = "snare.wav"
         self.sound4 = pygame.mixer.Sound(self.soundname4)
 
-        self.soundname5 = "cinq.wav"
+        self.soundname5 = "tambourin.wav"
         self.sound5 = pygame.mixer.Sound(self.soundname5)
 
 
